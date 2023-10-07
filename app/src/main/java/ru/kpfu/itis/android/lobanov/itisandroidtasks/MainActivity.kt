@@ -1,46 +1,93 @@
 package ru.kpfu.itis.android.lobanov.itisandroidtasks
 
+import android.content.res.Configuration
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.theme.ITISAndroidTasksTheme
+import android.view.View
+import androidx.fragment.app.FragmentContainerView
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.base.BaseActivity
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.base.BaseFragment
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragments.FirstFragment
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragments.FourthFragment
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ActionType
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
+    override val fragmentContainerId: Int = R.id.main_activity_container
+    private var counter: Int = 0
+    private var texts = arrayOf(
+        "Fourth screen",
+        "Fourth screen",
+        "Fourth screen"
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ITISAndroidTasksTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
+        setContentView(R.layout.activity_main)
+        val projectName = application.applicationInfo.packageName.split(".").last()
+
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .add(
+                    fragmentContainerId,
+                    FirstFragment.newInstance(message = projectName),
+                    FirstFragment.FIRST_SCREEN_FRAGMENT_TAG,
+                ).add(
+                    R.id.fragment_fourth,
+                    FourthFragment.newInstance(message = ""),
+                    FourthFragment.FOURTH_SCREEN_FRAGMENT_TAG,
+                )
+                .commit()
+        }
+
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            findViewById<FragmentContainerView>(R.id.fragment_fourth).visibility = View.VISIBLE
+        } else {
+            findViewById<FragmentContainerView>(R.id.fragment_fourth).visibility = View.GONE
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    fun passData(input: String) {
+        texts[counter % 3] = input
+        counter++
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ITISAndroidTasksTheme {
-        Greeting("Android")
+        val bundle = Bundle()
+        bundle.putString("message1", texts[0])
+        bundle.putString("message2", texts[1])
+        bundle.putString("message3", texts[2])
+
+        val transaction =
+            this.supportFragmentManager.beginTransaction()
+        val fragment = FourthFragment()
+        fragment.arguments = bundle
+        transaction.replace(R.id.fragment_fourth, fragment)
+        transaction.commit()
+    }
+
+
+    override fun goToScreen(
+        actionType: ActionType,
+        destination: BaseFragment,
+        tag: String?,
+        isAddToBackStack: Boolean
+    ) {
+        supportFragmentManager.beginTransaction().apply {
+            when (actionType) {
+                ActionType.ADD -> {
+                    this.add(fragmentContainerId, destination, tag)
+                }
+
+                ActionType.REPLACE -> {
+                    this.replace(fragmentContainerId, destination, tag)
+                }
+
+                ActionType.REMOVE -> {
+                    this.remove(destination)
+                }
+
+                else -> Unit
+            }
+            if (isAddToBackStack) {
+                this.addToBackStack(null)
+            }
+        }.commit()
     }
 }
