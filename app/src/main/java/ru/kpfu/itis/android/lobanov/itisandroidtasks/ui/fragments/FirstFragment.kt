@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.MainActivity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.R
@@ -55,8 +56,12 @@ class FirstFragment : BaseFragment(R.layout.fragment_first_screen) {
             }
 
             btnSecond.setOnClickListener {
-                (activity as MainActivity).passData(et.text.toString())
-                et.text.clear()
+                if (et.text.toString().trim() == "") {
+                     Toast.makeText(context, "Field is empty", Toast.LENGTH_SHORT).show()
+                } else {
+                    (activity as MainActivity).passData(et.text.toString().trim())
+                    et.text.clear()
+                }
             }
         }
     }
