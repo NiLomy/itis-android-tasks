@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ITIS Android Tasks</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="start_survey">Start survey</string>
+    <string name="question">Question</string>
+    <string name="finish_test">Finish test</string>
 </resources>

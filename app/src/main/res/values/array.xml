@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="questions">
+        <item>Is the Earth flat?</item>
+        <item>Can dogs fly?</item>
+        <item>Is it possible to time travel?</item>
+        <item>Is it safe to swim with sharks?</item>
+        <item>Do you believe in ghosts?</item>
+        <item>Are all mammals warm-blooded?</item>
+        <item>Does the sun rise in the east and set in the west?</item>
+        <item>Can humans survive without sleep?</item>
+        <item>Is the Earth the third planet from the sun?</item>
+        <item>Can humans see ultraviolet light?</item>
+        <item>Is the Great Wall of China visible from space?</item>
+        <item>Is the Earth the only planet with liquid water?</item>
+        <item>Can humans fly without any mechanical aid?</item>
+        <item>Is the moon larger than the Earth?</item>
+        <item>Is the Statue of Liberty located in Los Angeles?</item>
+        <item>Is the speed of sound faster than the speed of a bullet?</item>
+    </string-array>
+
+    <string-array name="answers">
+        <item>Yes</item>
+        <item>Maybe</item>
+        <item>I don\'t know</item>
+        <item>Probably not</item>
+        <item>No</item>
+    </string-array>
+</resources>
