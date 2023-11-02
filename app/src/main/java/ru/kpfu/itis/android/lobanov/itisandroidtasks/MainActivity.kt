@@ -1,46 +1,62 @@
 package ru.kpfu.itis.android.lobanov.itisandroidtasks
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.theme.ITISAndroidTasksTheme
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.base.BaseActivity
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.base.BaseFragment
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragments.StartPageFragment
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ActionType
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
+
+    override val fragmentContainerId: Int = R.id.main_activity_container
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ITISAndroidTasksTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
+        setContentView(R.layout.activity_main)
+
+        if (savedInstanceState == null) {
+            goToScreen(
+                ActionType.REPLACE,
+                StartPageFragment(),
+                StartPageFragment.START_PAGE_FRAGMENT_TAG,
+                true
+            )
+            supportFragmentManager.beginTransaction()
+                .replace(
+                    fragmentContainerId,
+                    StartPageFragment(),
+                    StartPageFragment.START_PAGE_FRAGMENT_TAG,
+                )
+                .commit()
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    override fun goToScreen(
+        actionType: ActionType,
+        destination: BaseFragment,
+        tag: String?,
+        isAddToBackStack: Boolean,
+    ) {
+        supportFragmentManager.beginTransaction().apply {
+            when (actionType) {
+                ActionType.ADD -> {
+                    this.add(fragmentContainerId, destination, tag)
+                }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ITISAndroidTasksTheme {
-        Greeting("Android")
+                ActionType.REPLACE -> {
+                    this.replace(fragmentContainerId, destination, tag)
+                }
+
+                ActionType.REMOVE -> {
+                    this.remove(destination)
+                }
+
+                else -> Unit
+            }
+            if (isAddToBackStack) {
+                this.addToBackStack(null)
+//                this.setCustomAnimations(R.anim.slide_in, R.anim.slide_out)
+            }
+        }.commit()
     }
 }

@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">ITIS Android Tasks</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="enter_number_of_images_to_add">Enter number of images to add</string>
+    <string name="submit">Submit</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="there_are_no_planets">There are no planets</string>
+    <string name="enter_news_count">Enter news count</string>
+    <string name="show_bottom_sheet">Show bottom sheet</string>
+    <string name="date">Date</string>
+    <string name="planet_name">Planet name</string>
+    <string name="you_should_enter_a_number_between_0_and_45">You should enter a number between 0 and 45</string>
+    <string name="you_should_enter_a_number_between_0_and_5">You should enter a number between 0 and 5</string>
+    <string name="cancel_deletion">Cancel deletion?</string>
+    <string name="yes">YES</string>
+    <string name="there_is_no_such_type">There is no such type</string>
 </resources>
