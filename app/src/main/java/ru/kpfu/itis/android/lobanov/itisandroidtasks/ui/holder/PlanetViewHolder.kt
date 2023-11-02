@@ -8,20 +8,20 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.PlanetModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragments.PlanetsFragment
 
 class PlanetViewHolder(
-    private val viewBinding: ItemPlanetBinding,
-    private val onNewsClicked: ((PlanetModel) -> Unit),
-    private val onNewsClickedLong: ((PlanetModel, ItemPlanetBinding) -> Unit),
+    val viewBinding: ItemPlanetBinding,
+    private val onPlanetClicked: ((View, PlanetModel) -> Unit),
+    private val onPlanetClickedLong: ((PlanetModel, ItemPlanetBinding) -> Unit),
     private val onBinClicked: ((Int) -> Unit),
     private val onBinClickedLong: ((PlanetModel, ItemPlanetBinding) -> Unit),
     private val onLikeClicked: ((Int, PlanetModel) -> Unit),
-    newsCount: Int
+    planetsCount: Int
 ) : RecyclerView.ViewHolder(viewBinding.root) {
 
     private var item: PlanetModel? = null
 
     init {
         viewBinding.root.setOnClickListener {
-            this.item?.let(onNewsClicked)
+            this.item?.let{ onPlanetClicked(viewBinding.ivPlanetImage, it) }
         }
         viewBinding.ivFavouriteBtn.setOnClickListener {
             this.item?.let {
@@ -39,9 +39,9 @@ class PlanetViewHolder(
             true
         }
 
-        if (newsCount > PlanetsFragment.LINEAR_LAYOUT_THRESHOLD) {
+        if (planetsCount > PlanetsFragment.LINEAR_LAYOUT_THRESHOLD) {
             viewBinding.root.setOnLongClickListener {
-                item?.let { item -> onNewsClickedLong(item, viewBinding) }
+                item?.let { item -> onPlanetClickedLong(item, viewBinding) }
                 true
             }
         }
@@ -54,6 +54,7 @@ class PlanetViewHolder(
             item.planetImage?.let { res ->
                 ivPlanetImage.setImageResource(res)
             }
+            ivPlanetImage.transitionName = "planet-$adapterPosition"
             changeLikeBtnStatus(isChecked = item.isFavoured)
             changeSelectStatus(isSelected = item.isSelected)
         }

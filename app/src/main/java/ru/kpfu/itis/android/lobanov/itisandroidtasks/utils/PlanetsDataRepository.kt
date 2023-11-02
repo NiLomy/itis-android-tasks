@@ -97,7 +97,7 @@ object PlanetsDataRepository {
 
     fun getAllPlanets(): List<DataModel> = planetsList
 
-    fun addNews(position: Int, planetModel: PlanetModel) {
+    fun addPlanet(position: Int, planetModel: PlanetModel) {
         planetsList.add(position, planetModel)
     }
 

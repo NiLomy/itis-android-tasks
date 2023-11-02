@@ -2,6 +2,7 @@ package ru.kpfu.itis.android.lobanov.itisandroidtasks.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DiffUtil
@@ -12,20 +13,19 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.ItemButtonBindi
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.ItemDateBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.ItemPlanetBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.ButtonModel
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.DataModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.DateModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.PlanetModel
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.DataModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.holder.ButtonViewHolder
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.holder.DateViewHolder
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.holder.PlanetViewHolder
-import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class PlanetAdapter(
     private val fragmentManager: FragmentManager,
-    private val onPlanetsClicked: ((PlanetModel) -> Unit),
+    private val onPlanetClicked: ((View, PlanetModel) -> Unit),
     private val onPlanetsClickedLong: ((PlanetModel, ItemPlanetBinding) -> Unit),
     private val onBinClicked: ((Int) -> Unit),
     private val onBinClickedLong: ((PlanetModel, ItemPlanetBinding) -> Unit),
@@ -45,12 +45,12 @@ class PlanetAdapter(
                     parent,
                     false
                 ),
-                onNewsClicked = onPlanetsClicked,
-                onNewsClickedLong = onPlanetsClickedLong,
+                onPlanetClicked = onPlanetClicked,
+                onPlanetClickedLong = onPlanetsClickedLong,
                 onBinClicked = onBinClicked,
                 onBinClickedLong = onBinClickedLong,
                 onLikeClicked = onLikeClicked,
-                newsCount = planetsCount
+                planetsCount = planetsCount
             )
 
             BUTTON_TYPE -> return ButtonViewHolder(

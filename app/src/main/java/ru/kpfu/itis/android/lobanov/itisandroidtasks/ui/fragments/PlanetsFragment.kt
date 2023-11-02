@@ -1,9 +1,15 @@
 package ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragments
 
 import android.os.Bundle
+import android.transition.ChangeBounds
+import android.transition.ChangeTransform
 import android.transition.Fade
+import android.transition.Transition
+import android.transition.TransitionSet
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,13 +20,11 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.R
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.adapter.PlanetAdapter
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.adapter.decorations.SimpleHorizontalMarginDecorator
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.adapter.decorations.SimpleVerticalDecorator
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.base.BaseActivity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.base.BaseFragment
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.FragmentPlanetsBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.ItemPlanetBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.DataModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.model.PlanetModel
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ActionType
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.PlanetsDataRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsKey
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.getValueInPx
@@ -32,6 +36,12 @@ class PlanetsFragment : BaseFragment(R.layout.fragment_planets) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+
+        (view.parent as? ViewGroup)?.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
+
         initRecyclerView()
     }
 
@@ -44,10 +54,10 @@ class PlanetsFragment : BaseFragment(R.layout.fragment_planets) {
         with(viewBinding) {
             val input = arguments?.getString(ParamsKey.PLANET_COUNT_KEY)
             if (input != null) {
-                val newsCount = input.toInt()
-                val list = PlanetsDataRepository.getPlanets(newsCount)
+                val planetCount = input.toInt()
+                val list = PlanetsDataRepository.getPlanets(planetCount)
 
-                if (newsCount == 0) {
+                if (planetCount == 0) {
                     tvNoPlanets.visibility = View.VISIBLE
                 } else {
                     tvNoPlanets.visibility = View.GONE
@@ -55,16 +65,16 @@ class PlanetsFragment : BaseFragment(R.layout.fragment_planets) {
 
                 planetAdapter = PlanetAdapter(
                     fragmentManager = parentFragmentManager,
-                    onPlanetsClicked = ::onPlanetClicked,
+                    onPlanetClicked = ::onPlanetClicked,
                     onPlanetsClickedLong = ::onPlanetClickedLong,
                     onBinClicked = ::onBinClicked,
                     onBinClickedLong = ::onBinClickedLong,
                     onLikeClicked = ::onFavouriteClicked,
-                    planetsCount = newsCount
+                    planetsCount = planetCount
                 )
                 rvPlanets.adapter = planetAdapter
 
-                if (newsCount <= LINEAR_LAYOUT_THRESHOLD) {
+                if (planetCount <= LINEAR_LAYOUT_THRESHOLD) {
                     initLinearLayout(rvPlanets)
                 } else {
                     initGridLayout(rvPlanets, list)
@@ -123,24 +133,42 @@ class PlanetsFragment : BaseFragment(R.layout.fragment_planets) {
         rvPlanets.addItemDecoration(SimpleVerticalDecorator(itemOffset = marginValue / HEIGHT_DIVIDER))
     }
 
-    private fun onPlanetClicked(planetModel: PlanetModel) {
+    private fun onPlanetClicked(view: View, planetModel: PlanetModel) {
+        addFadeTransition()
+
+        val transitionName = view.transitionName
+        val fragment = PlanetDetailsFragment.newInstance(
+            planetModel.planetName,
+            planetModel.planetDetails,
+            planetModel.planetImage,
+            "planet-${planetModel.planetId}"
+        )
+        fragment.sharedElementEnterTransition = getTransition()
+        fragment.sharedElementReturnTransition = getTransition()
+
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .addSharedElement(view, transitionName)
+            .replace(R.id.main_activity_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun getTransition(): Transition? {
+        val set = TransitionSet()
+        set.ordering = TransitionSet.ORDERING_TOGETHER
+        set.addTransition(ChangeBounds())
+        set.addTransition(ChangeTransform())
+        return set
+    }
+
+    private fun addFadeTransition() {
         val fade = Fade()
         fade.excludeTarget(android.R.id.statusBarBackground, true)
         fade.excludeTarget(android.R.id.navigationBarBackground, true)
 
         enterTransition = fade
         exitTransition = fade
-
-        (requireActivity() as? BaseActivity)?.goToScreen(
-            actionType = ActionType.REPLACE,
-            destination = PlanetDetailsFragment.newInstance(
-                planetModel.planetName,
-                planetModel.planetDetails,
-                planetModel.planetImage
-            ),
-            tag = PlanetDetailsFragment.PLANET_DETAILS_FRAGMENT_TAG,
-            isAddToBackStack = true
-        )
     }
 
     private fun onPlanetClickedLong(
@@ -179,12 +207,12 @@ class PlanetsFragment : BaseFragment(R.layout.fragment_planets) {
     }
 
     private fun removeElement(position: Int) {
-        val news = PlanetsDataRepository.getSinglePlanet(position)
+        val planet = PlanetsDataRepository.getSinglePlanet(position)
         planetAdapter?.removeAt(position)
         PlanetsDataRepository.removeAt(position)
         Snackbar.make(viewBinding.root, getString(R.string.cancel_deletion), Snackbar.LENGTH_SHORT)
             .setAction(getString(R.string.yes)) {
-                PlanetsDataRepository.addNews(position, news)
+                PlanetsDataRepository.addPlanet(position, planet)
                 planetAdapter?.setItems(PlanetsDataRepository.getAllPlanets())
             }.show()
     }
