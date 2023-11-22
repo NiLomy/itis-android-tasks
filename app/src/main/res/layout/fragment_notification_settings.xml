@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_notification_settings"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/notification_importance_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/notification_visibility_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notification_importance_spinner" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/detailed_msg_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
+        android:text="Show detailed message"
+        app:layout_constraintStart_toEndOf="@+id/detailed_msg_checkbox"
+        app:layout_constraintTop_toBottomOf="@+id/notification_visibility_spinner" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/detailed_msg_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="84dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notification_visibility_spinner" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/show_btn_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
+        android:text="Show buttons"
+        app:layout_constraintStart_toEndOf="@+id/show_btn_checkbox"
+        app:layout_constraintTop_toBottomOf="@+id/detailed_msg_checkbox" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/show_btn_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailed_msg_checkbox" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
