@@ -25,8 +25,9 @@ class NotificationProvider(private val context: Context) {
                 if (pair.value == importance) {
                     builder = NotificationCompat.Builder(
                         context,
-                        context.getString(R.string.default_notification_channel_id) + pair.key
+                        context.getString(R.string.default_notification_channel_id, pair.key)
                     )
+                    break
                 }
             }
             if (builder == null) throw RuntimeException(context.getString(R.string.unsupported_priority_type_text))

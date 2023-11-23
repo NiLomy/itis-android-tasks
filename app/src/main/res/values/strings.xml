@@ -20,6 +20,15 @@
     <string name="sending_notifications">sending notifications</string>
     <string name="rational_message_text">Please, give permission to send notifications for the correct operation of the application.\nIn other way you couldn\'t receive notifications.</string>
     <string name="gave_permission">You successfully gave permission for: %1$s</string>
+    <string name="there_is_no_internet_connection">There is no internet connection</string>
+    <string name="make_coroutines_async">Make coroutines async</string>
+    <string name="stop_coroutines_on_background">Stop coroutines on background</string>
+    <string name="execute">Execute</string>
+    <string name="show_detailed_message">Show detailed message</string>
+    <string name="show_buttons">Show buttons</string>
+    <string name="enter_title_for_your_notification">Enter title for your notification</string>
+    <string name="enter_message_for_your_notification">Enter message for your notification</string>
+    <string name="show_notification">Show notification</string>
 
     <string-array name="notification_importance_array">
         <item>Medium</item>
