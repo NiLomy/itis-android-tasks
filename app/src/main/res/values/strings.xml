@@ -1,4 +1,44 @@
 <resources>
     <string name="app_name">ITIS Android Tasks</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="default_notification_channel_id" translatable="false">NotificationChannel%1$s</string>
+    <string name="default_notification_channel_name">%1$s priority</string>
+
+    <string name="permission_denied_pattern">You denied following permission: %1$s</string>
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="unsupported_priority_type_text">The application doesn\'t support this priority type</string>
+    <string name="unsupported_visibility_type_text">The application doesn\'t support this visibility type</string>
+    <string name="main_page_greetings_text">Welcome to main page!</string>
+    <string name="user_cancelled_coroutines_by_collapsing_the_application">User cancelled coroutines by collapsing the application</string>
+    <string name="coroutine_finish_text">Coroutine number \"%1$d\" has finished task!</string>
+    <string name="cancelled_coroutines">Cancelled %1$d coroutines</string>
+    <string name="my_job_here_is_done">My job here is done</string>
+    <string name="confirm">Confirm</string>
+    <string name="notifications">notifications</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="denied_permission_message_text">You denied permission for %1$s too many times.\nPlease go to settings and give this permission</string>
+    <string name="sending_notifications">sending notifications</string>
+    <string name="rational_message_text">Please, give permission to send notifications for the correct operation of the application.\nIn other way you couldn\'t receive notifications.</string>
+    <string name="gave_permission">You successfully gave permission for: %1$s</string>
+    <string name="there_is_no_internet_connection">There is no internet connection</string>
+    <string name="make_coroutines_async">Make coroutines async</string>
+    <string name="stop_coroutines_on_background">Stop coroutines on background</string>
+    <string name="execute">Execute</string>
+    <string name="show_detailed_message">Show detailed message</string>
+    <string name="show_buttons">Show buttons</string>
+    <string name="enter_title_for_your_notification">Enter title for your notification</string>
+    <string name="enter_message_for_your_notification">Enter message for your notification</string>
+    <string name="show_notification">Show notification</string>
+
+    <string-array name="notification_importance_array">
+        <item>Medium</item>
+        <item>High</item>
+        <item>Urgent</item>
+    </string-array>
+
+    <string-array name="notification_visibility_array">
+        <item>Private</item>
+        <item>Secret</item>
+        <item>Public</item>
+    </string-array>
 </resources>
