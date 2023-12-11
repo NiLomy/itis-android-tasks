@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/film_upload_graph"
+    app:startDestination="@id/uploadFilmFragment">
+
+    <fragment
+        android:id="@+id/uploadFilmFragment"
+        android:name="ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.UploadFilmFragment"
+        android:label="UploadFilmFragment" />
+</navigation>

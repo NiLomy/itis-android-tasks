@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_uploadFilmFragment"
+            app:destination="@id/uploadFilmFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_uploadFilmFragment"
+            app:destination="@id/uploadFilmFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/uploadFilmFragment"
+        android:name="ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.UploadFilmFragment"
+        android:label="UploadFilmFragment"
+        tools:layout="@layout/fragment_upload_film">
+        <action
+            android:id="@+id/action_uploadFilmFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_uploadFilmFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+</navigation>
