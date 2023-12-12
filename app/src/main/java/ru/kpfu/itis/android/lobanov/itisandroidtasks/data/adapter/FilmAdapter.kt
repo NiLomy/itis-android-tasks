@@ -59,6 +59,18 @@ class FilmAdapter (
         diffResult.dispatchUpdatesTo(this)
     }
 
+    fun addItem(item: FilmRVModel) {
+        this.filmsList.add(item)
+        notifyItemChanged(filmsList.size - 1)
+    }
+
+    fun addItem(position: Int, item: FilmRVModel) {
+        this.filmsList.add(position, item)
+        for (i: Int in position until filmsList.size) {
+            notifyItemChanged(position)
+        }
+    }
+
     fun updateItem(position: Int, item: FilmRVModel) {
         this.filmsList[position] = item
         notifyItemChanged(position, item.isFavoured)
@@ -67,5 +79,9 @@ class FilmAdapter (
     fun removeAt(position: Int) {
         filmsList.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    fun get(position: Int): FilmRVModel {
+        return filmsList[position]
     }
 }

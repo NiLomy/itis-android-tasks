@@ -14,8 +14,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.R
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.adapter.FilmAdapter
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.FilmEntity
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.UserEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.FIlmRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.UserRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmModel
@@ -175,7 +173,7 @@ class MainActivity : AppCompatActivity() {
     fun showAllFilms(filmAdapter: FilmAdapter?, noFilmsTv: TextView) {
         lifecycleScope.async(Dispatchers.IO) {
             val result: MutableList<FilmRVModel> = ArrayList()
-            val films: List<FilmModel>? = FIlmRepository.getAll()
+            val films: List<FilmModel>? = FIlmRepository.getAllByDateDesc()
             if (films != null) {
                 for (i in films.indices) {
                     val f = films[i]
@@ -185,13 +183,13 @@ class MainActivity : AppCompatActivity() {
                     filmAdapter?.setItems(result)
 
                 }
-//                runOnUiThread {
-//                    noFilmsTv.visibility = View.GONE
-//                }
+                runOnUiThread {
+                    noFilmsTv.visibility = View.GONE
+                }
             } else {
-//                runOnUiThread {
-//                    noFilmsTv.visibility = View.VISIBLE
-//                }
+                runOnUiThread {
+                    noFilmsTv.visibility = View.VISIBLE
+                }
             }
         }
     }

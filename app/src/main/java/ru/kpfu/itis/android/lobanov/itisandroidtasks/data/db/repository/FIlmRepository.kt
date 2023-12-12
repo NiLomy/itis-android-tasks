@@ -12,14 +12,35 @@ object FIlmRepository {
         ServiceLocator.getDbInstance().getFilmDao().save(film.toFilmEntity(0))
     }
 
+    suspend fun delete(film: FilmModel) {
+        val filmEntity = ServiceLocator.getDbInstance().getFilmDao().get(film.name, film.date)
+        if (filmEntity != null) {
+            ServiceLocator.getDbInstance().getFilmDao().delete(filmEntity)
+        }
+    }
+
     suspend fun getFilm(name: String, date: Date): FilmModel? {
         val filmEntity: FilmEntity? = ServiceLocator.getDbInstance().getFilmDao().get(name, date)
         return filmEntity?.toFilmModel()
     }
 
-    suspend fun getAll(): List<FilmModel>? {
-        val filmEntityList: List<FilmEntity>? = ServiceLocator.getDbInstance().getFilmDao().getAll()
+    suspend fun getAllByDateDesc(): List<FilmModel>? {
+        val filmEntityList: List<FilmEntity>? = ServiceLocator.getDbInstance().getFilmDao().getAllByDateDesc()
         return filmEntityList?.map { filmEntity -> filmEntity.toFilmModel() }
-//        return filmEntityList
+    }
+
+    suspend fun getAllByDateAsc(): List<FilmModel>? {
+        val filmEntityList: List<FilmEntity>? = ServiceLocator.getDbInstance().getFilmDao().getAllByDateAsc()
+        return filmEntityList?.map { filmEntity -> filmEntity.toFilmModel() }
+    }
+
+    suspend fun getAllByRatingDesc(): List<FilmModel>? {
+        val filmEntityList: List<FilmEntity>? = ServiceLocator.getDbInstance().getFilmDao().getAllByRatingDesc()
+        return filmEntityList?.map { filmEntity -> filmEntity.toFilmModel() }
+    }
+
+    suspend fun getAllByRatingAsc(): List<FilmModel>? {
+        val filmEntityList: List<FilmEntity>? = ServiceLocator.getDbInstance().getFilmDao().getAllByRatingAsc()
+        return filmEntityList?.map { filmEntity -> filmEntity.toFilmModel() }
     }
 }

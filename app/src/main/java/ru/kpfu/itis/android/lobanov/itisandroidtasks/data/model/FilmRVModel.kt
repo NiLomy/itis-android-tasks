@@ -7,5 +7,5 @@ data class FilmRVModel(
     val name: String,
     val date: Date,
     val description: String,
-    val isFavoured: Boolean
+    var isFavoured: Boolean
 )

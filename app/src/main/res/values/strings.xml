@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">ITIS Android Tasks</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="cancel_deletion">Cancel deletion?</string>
+    <string name="yes">YES</string>
+
+    <string-array name="ordering_types">
+        <item>Date of release desc</item>
+        <item>Date of release asc</item>
+        <item>Rating desc</item>
+        <item>Rating asc</item>
+    </string-array>
 </resources>

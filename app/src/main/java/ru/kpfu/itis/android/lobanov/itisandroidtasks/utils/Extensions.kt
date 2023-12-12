@@ -4,6 +4,7 @@ import android.util.DisplayMetrics
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.FilmEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.UserEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmModel
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmRVModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.UserModel
 
 fun Int.getValueInPx(dm: DisplayMetrics): Int {
@@ -35,6 +36,12 @@ fun FilmModel.toFilmEntity(id: Int) = FilmEntity(
 )
 
 fun FilmEntity.toFilmModel() = FilmModel(
+    name = name,
+    date = date,
+    description = description
+)
+
+fun FilmRVModel.toFilmModel() = FilmModel(
     name = name,
     date = date,
     description = description

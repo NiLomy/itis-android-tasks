@@ -4,6 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.AppDatabase
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_1_2
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_2_3
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_3_4
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_4_5
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_5_6
 
 object ServiceLocator {
     private var dbInstance: AppDatabase? = null
@@ -11,6 +16,13 @@ object ServiceLocator {
 
     fun initData(ctx: Context) {
         dbInstance = Room.databaseBuilder(ctx, AppDatabase::class.java, "film_gallery.db")
+            .addMigrations(
+                MIGRATION_1_2(),
+                MIGRATION_2_3(),
+                MIGRATION_3_4(),
+                MIGRATION_4_5(),
+                MIGRATION_5_6()
+            )
             .build()
         filmPref = ctx.getSharedPreferences("film_gallery_pref", Context.MODE_PRIVATE)
     }
