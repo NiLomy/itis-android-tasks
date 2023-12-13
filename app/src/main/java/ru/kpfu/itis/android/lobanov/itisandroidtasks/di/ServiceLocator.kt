@@ -9,6 +9,8 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_3_4
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_4_5
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_5_6
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_6_7
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.migration.MIGRATION_7_8
 
 object ServiceLocator {
     private var dbInstance: AppDatabase? = null
@@ -21,7 +23,9 @@ object ServiceLocator {
                 MIGRATION_2_3(),
                 MIGRATION_3_4(),
                 MIGRATION_4_5(),
-                MIGRATION_5_6()
+                MIGRATION_5_6(),
+                MIGRATION_6_7(),
+                MIGRATION_7_8()
             )
             .build()
         filmPref = ctx.getSharedPreferences("film_gallery_pref", Context.MODE_PRIVATE)

@@ -17,6 +17,8 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.UserModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.FragmentAuthorizationBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.di.ServiceLocator
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.MainActivity
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsConstants
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.PasswordEncrypter
 
 class AuthorizationFragment: Fragment(R.layout.fragment_authorization) {
     private var _viewBinding: FragmentAuthorizationBinding? = null
@@ -54,16 +56,12 @@ class AuthorizationFragment: Fragment(R.layout.fragment_authorization) {
                         if (user == null) {
                             makeToast("There is no such user. Please register in")
                         } else {
-                            ServiceLocator.getSharedPreferences().edit()
-                                .putString("username", user.name)
-                                .putString("userPhone", user.phone)
-                                .putString("userEmail", user.email)
-                                .putString("userPassword", user.password)
-                                .apply()
-                            (activity as MainActivity).navigateTo(
-                                HomeFragment(),
-                                HomeFragment.HOME_FRAGMENT_TAG
-                            )
+                            if (user.deletionDate != null) {
+                                val dialog = RestoreDialogFragment(user = user, signIn = ::signIn)
+                                dialog.show(parentFragmentManager, RestoreDialogFragment.RESTORE_DIALOG_FRAGMENT_TAG)
+                            } else {
+                                signIn(user)
+                            }
                         }
                     }
                 }
@@ -76,6 +74,19 @@ class AuthorizationFragment: Fragment(R.layout.fragment_authorization) {
                 )
             }
         }
+    }
+
+    private fun signIn(user: UserModel) {
+        ServiceLocator.getSharedPreferences().edit()
+            .putString("username", user.name)
+            .putString("userPhone", user.phone)
+            .putString("userEmail", user.email)
+            .putString("userPassword", PasswordEncrypter.encrypt(user.password, ParamsConstants.ENCRYPTING_ALGORITHM))
+            .apply()
+        (activity as MainActivity).navigateTo(
+            HomeFragment(),
+            HomeFragment.HOME_FRAGMENT_TAG
+        )
     }
 
     private fun makeToast(text: String) {

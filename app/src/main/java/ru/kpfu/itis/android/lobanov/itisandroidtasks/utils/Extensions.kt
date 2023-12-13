@@ -17,7 +17,8 @@ fun UserModel.toUserEntity() = UserEntity(
     name = name,
     phone = phone,
     email = email,
-    password = password
+    password = PasswordEncrypter.encrypt(password, ParamsConstants.ENCRYPTING_ALGORITHM),
+    deletionDate = deletionDate
 )
 
 fun UserEntity.toUserModel() = UserModel(
@@ -25,7 +26,8 @@ fun UserEntity.toUserModel() = UserModel(
     name = name,
     phone = phone,
     email = email,
-    password = password
+    password = password,
+    deletionDate = deletionDate
 )
 
 fun FilmModel.toFilmEntity(id: Int) = FilmEntity(

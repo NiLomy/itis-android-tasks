@@ -49,7 +49,7 @@ class RegistrationFragment: Fragment(R.layout.fragment_registration) {
                         if (user != null) {
                            makeToast("This user currently exists. Please log in")
                         } else {
-                            UserRepository.save(UserModel(1, name, phone, email, password))
+                            UserRepository.save(UserModel(0, name, phone, email, password, null))
                             (activity as MainActivity).navigateTo(
                                 AuthorizationFragment(),
                                 AuthorizationFragment.AUTHORIZATION_FRAGMENT_TAG

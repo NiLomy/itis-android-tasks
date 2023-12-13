@@ -35,6 +35,7 @@ object RatingRepository {
         val filmEntity = ServiceLocator.getDbInstance().getFilmDao().get(film.name, film.date)
         filmEntity?.let {
             val rating = ServiceLocator.getDbInstance().getRatingDao().getAllFilmRating(filmEntity.filmId)
+            if (rating.isEmpty()) return null
             return rating.map { filmRatingEntity -> filmRatingEntity.rating }.average()
         }
         return null

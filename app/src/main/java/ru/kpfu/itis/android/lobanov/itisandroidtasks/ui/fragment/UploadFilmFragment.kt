@@ -40,12 +40,28 @@ class UploadFilmFragment: Fragment(R.layout.fragment_upload_film) {
         with(viewBinding) {
             uploadBtn.setOnClickListener {
                 val name: String = nameEt.text.toString()
-                val date: String = yearEt.text.toString()
+                val date= "${datePicker.year}-${datePicker.month}-${datePicker.dayOfMonth}"
                 val description: String = descriptionEt.text.toString()
 
                 if (isValid(name, date)) {
-                    (requireActivity() as MainActivity).uploadFilm(name, date, description)
+                    uploadFilm(name, date, description)
                 }
+            }
+        }
+    }
+
+    private fun uploadFilm(filmName: String, date: String, description: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val film: FilmModel? = FIlmRepository.getFilm(filmName, Date.valueOf(date))
+            if (film != null) {
+                makeToast("This film currently exists")
+            } else {
+                FIlmRepository.save(FilmModel(filmName, Date.valueOf(date), description))
+                with(viewBinding) {
+                    nameEt.setText("")
+                    descriptionEt.setText("")
+                }
+                makeToast("You successfully added this film!")
             }
         }
     }

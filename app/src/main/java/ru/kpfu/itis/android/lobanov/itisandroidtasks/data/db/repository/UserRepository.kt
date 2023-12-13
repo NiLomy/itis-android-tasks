@@ -6,6 +6,8 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.relation.Use
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.UserModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.di.ServiceLocator
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsConstants
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.PasswordEncrypter
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.toFilmModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.toUserEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.toUserModel
@@ -27,6 +29,10 @@ object UserRepository {
         }
     }
 
+    suspend fun delete(email: String) {
+        ServiceLocator.getDbInstance().getUserDao().delete(email)
+    }
+
     suspend fun deleteUserFilmCrossRef(email: String, film: FilmModel) {
         val filmEntity = ServiceLocator.getDbInstance().getFilmDao().get(film.name, film.date)
         getUserByEmail(email)?.let {  userEntity ->
@@ -36,6 +42,10 @@ object UserRepository {
                 )
             }
         }
+    }
+
+    suspend fun setDeletionDate(email: String, deletionDate: Date?) {
+        ServiceLocator.getDbInstance().getUserDao().setDeletionDate(email, deletionDate)
     }
 
     suspend fun getUserByPhone(phone: String): UserModel? {
@@ -49,7 +59,7 @@ object UserRepository {
     }
 
     suspend fun getUser(email: String, password: String): UserModel? {
-        val userEntity: UserEntity? = ServiceLocator.getDbInstance().getUserDao().get(email, password)
+        val userEntity: UserEntity? = ServiceLocator.getDbInstance().getUserDao().get(email, PasswordEncrypter.encrypt(password, ParamsConstants.ENCRYPTING_ALGORITHM))
         return userEntity?.toUserModel()
     }
 
@@ -65,11 +75,6 @@ object UserRepository {
         }
     }
 
-    suspend fun getAllUsers(): List<UserEntity> {
-        val userEntity: List<UserEntity> = ServiceLocator.getDbInstance().getUserDao().getAll()
-        return userEntity
-    }
-
     suspend fun updatePhone(user: UserModel, phone: String) {
         val id = getUser(user.email, user.password)?.id
         id?.let { ServiceLocator.getDbInstance().getUserDao().updatePhone(it, phone) }
@@ -82,6 +87,6 @@ object UserRepository {
 
     suspend fun updatePassword(user: UserModel, password: String) {
         val id = getUser(user.email, user.password)?.id
-        id?.let { ServiceLocator.getDbInstance().getUserDao().updatePassword(it, password) }
+        id?.let { ServiceLocator.getDbInstance().getUserDao().updatePassword(it, PasswordEncrypter.encrypt(password, ParamsConstants.ENCRYPTING_ALGORITHM)) }
     }
 }

@@ -90,15 +90,6 @@ class DetailedFilmBottomSheetDialogFragment(
                 }
             }
 
-
-//            markFavouriteBtn.setOnClickListener {
-//                if (!currentUserEmail.isNullOrEmpty()) {
-//                    lifecycleScope.launch(Dispatchers.IO) {
-//                        UserRepository.saveUserFilmCrossRef(currentUserEmail, FilmModel(filmName, filmDate, filmDescription))
-//                    }
-//                }
-//            }
-
             lifecycleScope.launch(Dispatchers.IO) {
                 val rating: Double? = RatingRepository.getAllFilmRating(filmModel.toFilmModel())
                 if (rating != null) {
@@ -106,13 +97,14 @@ class DetailedFilmBottomSheetDialogFragment(
                         if (rating.isNaN()) {
                             ratingTv.text = "There are no ratings"
                         } else {
+                            val s = rating.toBigDecimal().setScale(1, RoundingMode.UP).toDouble().toString()
                             ratingTv.text = "Rating: " + rating.toBigDecimal().setScale(1, RoundingMode.UP).toDouble().toString()
                         }
                     }
                 }
                 if (currentUserEmail != null) {
                     val markedRating = RatingRepository.getFilmRating(filmModel.toFilmModel(), currentUserEmail)
-                    if (markedRating != null) {
+                    if (markedRating != null && !markedRating.isNaN()) {
                         activity?.runOnUiThread {
                             filmRb.rating = markedRating.toFloat()
                         }
@@ -124,8 +116,11 @@ class DetailedFilmBottomSheetDialogFragment(
                 lifecycleScope.launch(Dispatchers.IO) {
                     if (!currentUserEmail.isNullOrEmpty()) {
                         RatingRepository.save(FilmRatingModel(filmModel.name, filmModel.date, currentUserEmail, rating.toDouble()))
-                        activity?.runOnUiThread {
-                            ratingTv.text = "Rating: " + rating.toBigDecimal().setScale(1, RoundingMode.UP).toDouble().toString()
+                        val resultRating: Double? = RatingRepository.getAllFilmRating(filmModel.toFilmModel())
+                        if (resultRating != null) {
+                            activity?.runOnUiThread {
+                                ratingTv.text = "Rating: " + resultRating.toBigDecimal().setScale(1, RoundingMode.UP).toDouble().toString()
+                            }
                         }
                     }
                 }

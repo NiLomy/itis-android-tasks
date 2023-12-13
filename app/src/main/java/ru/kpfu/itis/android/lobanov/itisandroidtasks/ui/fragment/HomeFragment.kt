@@ -32,6 +32,7 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmRVModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.FragmentHomeBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.di.ServiceLocator
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.getValueInPx
+import java.sql.Date
 
 class HomeFragment: Fragment(R.layout.fragment_home) {
     private var _viewBinding: FragmentHomeBinding? = null
@@ -143,7 +144,8 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                     result.add(FilmRVModel(i, f.name, f.date, f.description, true))
                 }
                 activity?.runOnUiThread {
-                    if (result.isEmpty()) viewBinding.favouritesRv.visibility = View.GONE
+                    // I don't know why but if I use here viewBinding I face NPE
+                    if (result.isEmpty()) _viewBinding?.favouritesRv?.visibility = View.GONE
                     filmAdapter?.setItems(result)
                 }
             }
@@ -154,7 +156,11 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         lifecycleScope.async(Dispatchers.IO) {
             val result: MutableList<FilmRVModel> = ArrayList()
             val films: List<FilmModel>? = FIlmRepository.getAllByDateDesc()
-            if (films != null) {
+            if (films.isNullOrEmpty()) {
+                activity?.runOnUiThread {
+                    noFilmsTv.visibility = View.VISIBLE
+                }
+            } else {
                 for (i in films.indices) {
                     val f = films[i]
                     result.add(FilmRVModel(i, f.name, f.date, f.description, false))
@@ -162,10 +168,6 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
                 activity?.runOnUiThread {
                     filmAdapter?.setItems(result)
                     noFilmsTv.visibility = View.GONE
-                }
-            } else {
-                activity?.runOnUiThread {
-                    noFilmsTv.visibility = View.VISIBLE
                 }
             }
         }
@@ -244,7 +246,6 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         addFadeTransition()
 
         val transitionName = view.transitionName
-        // TODO send data from film to dialog
         val bottomSheet = favouritesAdapter?.let {
             DetailedFilmBottomSheetDialogFragment(filmModel, it)
         }

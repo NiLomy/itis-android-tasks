@@ -8,6 +8,7 @@ import androidx.room.Query
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.UserEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.relation.UserFavouriteFilmsEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.relation.UserFilmCrossRefEntity
+import java.sql.Date
 
 @Dao
 interface UserDao {
@@ -23,8 +24,14 @@ interface UserDao {
     @Delete
     suspend fun delete(userEntity: UserEntity)
 
+    @Query("DELETE FROM users WHERE email = :email")
+    suspend fun delete(email: String)
+
     @Delete
     suspend fun deleteUserFilmCrossRef(crossRef: UserFilmCrossRefEntity)
+
+    @Query("UPDATE users SET deletion_date = :deletionDate WHERE email = :email")
+    suspend fun setDeletionDate(email: String, deletionDate: Date?)
 
     @Query("SELECT * FROM users WHERE userId = :userId")
     suspend fun get(userId: Int): UserEntity?
