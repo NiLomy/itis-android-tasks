@@ -23,34 +23,21 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Film Name" />
+            tools:text="@string/film_name" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/film_image_iv"
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_film_date"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
-            android:adjustViewBounds="true"
-            android:maxHeight="180dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toTopOf="@id/is_favourite_btn"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_film_name" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/is_favourite_btn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:srcCompat="@drawable/ic_unfavorite" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/film_date" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

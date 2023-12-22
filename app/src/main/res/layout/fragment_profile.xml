@@ -1,103 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/name_et"
-        android:layout_width="wrap_content"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/name_et_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:text="Name"
-        android:textSize="24sp"
+        android:layout_marginHorizontal="68dp"
+        android:layout_marginTop="80dp"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/email_et"
-        android:layout_width="wrap_content"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/name_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="@string/name"
+            android:imeOptions="actionNext"
+            android:textAlignment="center" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email_et_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="68dp"
         android:layout_marginTop="30dp"
-        android:text="Email"
-        android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@id/name_et"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/name_et_title"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/phone_et"
-        android:layout_width="wrap_content"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/email_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"
+            android:imeOptions="actionNext"
+            android:textAlignment="center" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phone_et_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="68dp"
         android:layout_marginTop="30dp"
-        android:text="Phone"
-        android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@id/email_et"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/email_et_title"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/old_password_et"
-        android:layout_width="wrap_content"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/phone_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/phone"
+            android:imeOptions="actionNext"
+            android:textAlignment="center" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/old_password_et_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="68dp"
         android:layout_marginTop="30dp"
-        android:hint="Current password"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/phone_et"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/phone_et_title"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/new_password_et"
-        android:layout_width="wrap_content"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/old_password_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/current_password"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:textAlignment="center" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/new_password_et_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="68dp"
         android:layout_marginTop="30dp"
-        android:hint="New password"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/old_password_et"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/old_password_et_title"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/confirm_password_et"
-        android:layout_width="wrap_content"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/new_password_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/new_password"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:textAlignment="center" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/confirm_password_et_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="68dp"
         android:layout_marginTop="30dp"
-        android:hint="Confirm password"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/new_password_et"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/new_password_et_title"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <androidx.appcompat.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/confirm_password_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/confirm_password"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:textAlignment="center" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/apply_changes_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Apply changes"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/confirm_password_et"
+        android:layout_marginHorizontal="72dp"
+        android:layout_marginVertical="32dp"
+        android:text="@string/apply_changes"
+        android:textColor="@color/black"
+        app:backgroundTint="@android:color/white"
+        app:cornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/confirm_password_et_title"
+        app:rippleColor="@color/purple_200"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/delete_iv"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_delete"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:src="@drawable/ic_delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/exit_iv"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_exit"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/delete_iv"/>
+        android:src="@drawable/ic_exit"
+        app:layout_constraintEnd_toStartOf="@+id/delete_iv"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

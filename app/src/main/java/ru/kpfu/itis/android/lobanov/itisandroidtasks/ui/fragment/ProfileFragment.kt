@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -42,10 +41,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private fun initViews() {
         with(viewBinding) {
             val sharedPref: SharedPreferences = ServiceLocator.getSharedPreferences()
-            val username: String = sharedPref.getString("username", "").toString()
-            val userPhone: String = sharedPref.getString("userPhone", "").toString()
-            val userEmail: String = sharedPref.getString("userEmail", "").toString()
-            val userPassword: String = sharedPref.getString("userPassword", "").toString()
+            val username: String = sharedPref.getString(ParamsConstants.USERNAME_SP_TAG, "").toString()
+            val userPhone: String = sharedPref.getString(ParamsConstants.PHONE_SP_TAG, "").toString()
+            val userEmail: String = sharedPref.getString(ParamsConstants.EMAIL_SP_TAG, "").toString()
+            val userPassword: String = sharedPref.getString(ParamsConstants.PASSWORD_SP_TAG, "").toString()
 
             nameEt.setText(username)
             phoneEt.setText(userPhone)
@@ -76,7 +75,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
             deleteIv.setOnClickListener {
                 val dialog = DeletionDialogFragment(userEmail = userEmail, clearData = ::clearData)
-                dialog.show(parentFragmentManager, DeletionDialogFragment.DELETION_DIALOG_FRAGMENT_TAG)
+                dialog.show(
+                    parentFragmentManager,
+                    DeletionDialogFragment.DELETION_DIALOG_FRAGMENT_TAG
+                )
             }
         }
     }
@@ -97,7 +99,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 if (newPhone != userPhone) {
                     val user: UserModel? = UserRepository.getUserByPhone(newPhone)
                     if (user != null) {
-                        makeToast("User with such phone number is currently exists")
+                        makeToast(getString(R.string.user_with_such_phone_number_is_currently_exists))
+                    } else if (!newPhone.matches(Regex(ParamsConstants.PHONE_REGEX))) {
+                        makeToast(getString(R.string.this_is_not_correct_phone))
                     } else {
                         currentUser?.let { userModel ->
                             UserRepository.updatePhone(
@@ -105,7 +109,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                                 newPhone
                             )
                         }
-                        ServiceLocator.getSharedPreferences().edit().putString("userPhone", newPhone)
+                        ServiceLocator.getSharedPreferences().edit()
+                            .putString(ParamsConstants.PHONE_SP_TAG, newPhone)
                             .apply()
                         activity?.runOnUiThread {
                             phoneEt.setText(newPhone)
@@ -115,7 +120,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 if (newEmail != userEmail) {
                     val user: UserModel? = UserRepository.getUserByEmail(newEmail)
                     if (user != null) {
-                        makeToast("User with such phone number is currently exists")
+                        makeToast(getString(R.string.user_with_such_email_is_currently_exists))
+                    } else if (newEmail.matches(Regex(ParamsConstants.EMAIL_REGEX))) {
+                        makeToast(getString(R.string.this_is_not_correct_email))
                     } else {
                         currentUser?.let { userModel ->
                             UserRepository.updateEmail(
@@ -123,18 +130,28 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                                 newEmail
                             )
                         }
-                        ServiceLocator.getSharedPreferences().edit().putString("userEmail", newEmail)
+                        ServiceLocator.getSharedPreferences().edit()
+                            .putString(ParamsConstants.EMAIL_SP_TAG, newEmail)
                             .apply()
                         activity?.runOnUiThread {
                             emailEt.setText(newEmail)
                         }
                     }
                 }
-                if (isPasswordInputsValid(userPassword, oldPassword, newPassword, confirmPassword)) {
+                if (isPasswordInputsValid(
+                        userPassword,
+                        oldPassword,
+                        newPassword,
+                        confirmPassword
+                    )
+                ) {
                     currentUser?.let { userModel ->
                         UserRepository.updatePassword(
                             userModel,
-                            newPassword
+                            PasswordEncrypter.encrypt(
+                                newPassword,
+                                ParamsConstants.ENCRYPTING_ALGORITHM
+                            )
                         )
                     }
                     activity?.runOnUiThread {
@@ -150,9 +167,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private fun clearData(sharedPref: SharedPreferences) {
         // use remove instead of clear for a more safe logic
         sharedPref.edit()
-            .remove("username")
-            .remove("userPhone")
-            .remove("userEmail")
+            .remove(ParamsConstants.USERNAME_SP_TAG)
+            .remove(ParamsConstants.PHONE_SP_TAG)
+            .remove(ParamsConstants.EMAIL_SP_TAG)
+            .remove(ParamsConstants.PASSWORD_SP_TAG)
             .apply()
         (activity as MainActivity).navigateTo(
             AuthorizationFragment(),
@@ -169,19 +187,23 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         if (oldPassword.isEmpty() && newPassword.isEmpty() && confirmPassword.isEmpty()) return false
 
         if (oldPassword.isEmpty() && newPassword.isNotEmpty()) {
-            makeToast("You should enter your current password")
+            makeToast(getString(R.string.you_should_enter_your_current_password))
             return false
         }
-        if (userPassword != PasswordEncrypter.encrypt(oldPassword, ParamsConstants.ENCRYPTING_ALGORITHM)) {
-            makeToast("You entered wrong password")
+        if (userPassword != PasswordEncrypter.encrypt(
+                oldPassword,
+                ParamsConstants.ENCRYPTING_ALGORITHM
+            )
+        ) {
+            makeToast(getString(R.string.you_entered_wrong_password))
             return false
         }
         if (oldPassword.isNotEmpty() && newPassword.isEmpty()) {
-            makeToast("You should enter your new password to change")
+            makeToast(getString(R.string.you_should_enter_your_new_password_to_change))
             return false
         }
         if (newPassword != confirmPassword) {
-            makeToast("Passwords doesn't match")
+            makeToast(getString(R.string.passwords_doesn_t_match))
             return false
         }
         return true

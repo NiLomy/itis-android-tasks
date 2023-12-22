@@ -4,14 +4,14 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.R
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.UserRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.UserModel
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsConstants
 
 class RestoreDialogFragment(
     private val user: UserModel,
@@ -19,11 +19,11 @@ class RestoreDialogFragment(
 ) : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
-        builder.setMessage("Your account was deleted. Do you want to restore your account?")
-            .setPositiveButton("RESTORE") { _, _ ->
+        builder.setMessage(getString(R.string.your_account_was_deleted_do_you_want_to_restore_your_account))
+            .setPositiveButton(getString(R.string.restore)) { _, _ ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     UserRepository.setDeletionDate(user.email, null)
-                    WorkManager.getInstance(requireContext()).cancelUniqueWork("delayedDeleteUser")
+                    WorkManager.getInstance(requireContext()).cancelUniqueWork(ParamsConstants.DELETE_USER_WORK_NAME)
                     val userModel = UserRepository.getUserByEmail(user.email)
                     if (userModel == null) {
                         UserRepository.save(user)
@@ -32,7 +32,7 @@ class RestoreDialogFragment(
                     this@RestoreDialogFragment.dismiss()
                 }
             }
-            .setNegativeButton("DELETE PERMANENTLY") { _, _ ->
+            .setNegativeButton(getString(R.string.delete_permanently)) { _, _ ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     UserRepository.delete(user.email)
                     this@RestoreDialogFragment.dismiss()

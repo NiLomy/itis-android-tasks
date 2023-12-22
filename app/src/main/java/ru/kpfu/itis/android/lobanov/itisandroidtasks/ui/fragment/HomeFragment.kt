@@ -1,11 +1,7 @@
 package ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment
 
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.ChangeTransform
 import android.transition.Fade
-import android.transition.Transition
-import android.transition.TransitionSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,14 +23,14 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.adapter.decorations.Ho
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.adapter.decorations.VerticalMarginDecorator
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.FIlmRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.UserRepository
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmCatalog
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmModel
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmRVModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.FragmentHomeBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.di.ServiceLocator
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsConstants
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.getValueInPx
-import java.sql.Date
 
-class HomeFragment: Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home) {
     private var _viewBinding: FragmentHomeBinding? = null
     private val viewBinding: FragmentHomeBinding
         get() = _viewBinding!!
@@ -52,7 +48,8 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<BottomNavigationView>(R.id.main_bottom_navigation)?.visibility = View.VISIBLE
+        activity?.findViewById<BottomNavigationView>(R.id.main_bottom_navigation)?.visibility =
+            View.VISIBLE
         initRecyclerView()
         initViews()
     }
@@ -60,16 +57,18 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private fun initRecyclerView() {
         filmAdapter = FilmAdapter(
             onFilmClicked = ::onFilmClicked,
-            onLikeClicked = ::onFavouriteClicked
+            favoritesRV = null
         )
         favouritesAdapter = FilmAdapter(
-            onFilmClicked = ::onFilmClicked,
-            onLikeClicked = ::onFavouriteClicked
+            onFilmClicked = ::onFavouriteFilmClicked,
+            favoritesRV = viewBinding.favouritesRv
         )
 
         with(viewBinding) {
-            val favouritesLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            val filmLayoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            val favouritesLayoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            val filmLayoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             favouritesRv.layoutManager = favouritesLayoutManager
             favouritesRv.adapter = favouritesAdapter
 
@@ -101,30 +100,32 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             touchHelper.attachToRecyclerView(filmsRv)
 
             setDecorations(filmsRv)
-//            (activity as MainActivity).showAllFilms(filmAdapter, noFilmsTv)
             showAllFavourites(favouritesAdapter)
             showAllFilmsDateDesc(filmAdapter, noFilmsTv)
-//            filmAdapter?.setItems(NewsDataRepository.getNewsList())
         }
     }
 
     private fun initViews() {
         with(viewBinding) {
             val orderTypes: Array<String> = resources.getStringArray(R.array.ordering_types)
-            val arrayAdapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), R.layout.item_dropdown, orderTypes)
+            val arrayAdapter: ArrayAdapter<String> =
+                ArrayAdapter(requireContext(), R.layout.item_dropdown, orderTypes)
             dropdownTv.setAdapter(arrayAdapter)
 
             dropdownTv.setOnItemClickListener { _, _, position, _ ->
-                when(position) {
+                when (position) {
                     0 -> {
                         showAllFilmsDateDesc(filmAdapter, noFilmsTv)
                     }
+
                     1 -> {
                         showAllFilmsDateAsc(filmAdapter, noFilmsTv)
                     }
+
                     2 -> {
                         showAllFilmsRatingDesc(filmAdapter, noFilmsTv)
                     }
+
                     3 -> {
                         showAllFilmsRatingAsc(filmAdapter, noFilmsTv)
                     }
@@ -134,14 +135,15 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     }
 
     private fun showAllFavourites(filmAdapter: FilmAdapter?) {
-        val currentUserEmail: String? = ServiceLocator.getSharedPreferences().getString("userEmail", "")
+        val currentUserEmail: String? =
+            ServiceLocator.getSharedPreferences().getString(ParamsConstants.EMAIL_SP_TAG, "")
         if (!currentUserEmail.isNullOrEmpty()) {
             lifecycleScope.async(Dispatchers.IO) {
-                val result: MutableList<FilmRVModel> = ArrayList()
+                val result: MutableList<FilmCatalog.FilmRVModel> = ArrayList()
                 val films: List<FilmModel> = UserRepository.getAllFavourites(currentUserEmail)
                 for (i: Int in films.indices) {
                     val f = films[i]
-                    result.add(FilmRVModel(i, f.name, f.date, f.description, true))
+                    result.add(FilmCatalog.FilmRVModel(i, f.name, f.date, f.description, true))
                 }
                 activity?.runOnUiThread {
                     // I don't know why but if I use here viewBinding I face NPE
@@ -154,7 +156,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private fun showAllFilmsDateDesc(filmAdapter: FilmAdapter?, noFilmsTv: TextView) {
         lifecycleScope.async(Dispatchers.IO) {
-            val result: MutableList<FilmRVModel> = ArrayList()
+            val result: MutableList<FilmCatalog.FilmRVModel> = ArrayList()
             val films: List<FilmModel>? = FIlmRepository.getAllByDateDesc()
             if (films.isNullOrEmpty()) {
                 activity?.runOnUiThread {
@@ -163,7 +165,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
             } else {
                 for (i in films.indices) {
                     val f = films[i]
-                    result.add(FilmRVModel(i, f.name, f.date, f.description, false))
+                    result.add(FilmCatalog.FilmRVModel(i, f.name, f.date, f.description, false))
                 }
                 activity?.runOnUiThread {
                     filmAdapter?.setItems(result)
@@ -175,12 +177,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private fun showAllFilmsRatingDesc(filmAdapter: FilmAdapter?, noFilmsTv: TextView) {
         lifecycleScope.async(Dispatchers.IO) {
-            val result: MutableList<FilmRVModel> = ArrayList()
+            val result: MutableList<FilmCatalog.FilmRVModel> = ArrayList()
             val films: List<FilmModel>? = FIlmRepository.getAllByRatingDesc()
-            if (films != null) {
+            if (!films.isNullOrEmpty()) {
                 for (i in films.indices) {
                     val f = films[i]
-                    result.add(FilmRVModel(i, f.name, f.date, f.description, false))
+                    result.add(FilmCatalog.FilmRVModel(i, f.name, f.date, f.description, false))
                 }
                 activity?.runOnUiThread {
                     filmAdapter?.setItems(result)
@@ -196,12 +198,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private fun showAllFilmsRatingAsc(filmAdapter: FilmAdapter?, noFilmsTv: TextView) {
         lifecycleScope.async(Dispatchers.IO) {
-            val result: MutableList<FilmRVModel> = ArrayList()
+            val result: MutableList<FilmCatalog.FilmRVModel> = ArrayList()
             val films: List<FilmModel>? = FIlmRepository.getAllByRatingAsc()
-            if (films != null) {
+            if (!films.isNullOrEmpty()) {
                 for (i in films.indices) {
                     val f = films[i]
-                    result.add(FilmRVModel(i, f.name, f.date, f.description, false))
+                    result.add(FilmCatalog.FilmRVModel(i, f.name, f.date, f.description, false))
                 }
                 activity?.runOnUiThread {
                     filmAdapter?.setItems(result)
@@ -217,12 +219,12 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
 
     private fun showAllFilmsDateAsc(filmAdapter: FilmAdapter?, noFilmsTv: TextView) {
         lifecycleScope.async(Dispatchers.IO) {
-            val result: MutableList<FilmRVModel> = ArrayList()
+            val result: MutableList<FilmCatalog.FilmRVModel> = ArrayList()
             val films: List<FilmModel>? = FIlmRepository.getAllByDateAsc()
-            if (films != null) {
+            if (!films.isNullOrEmpty()) {
                 for (i in films.indices) {
                     val f = films[i]
-                    result.add(FilmRVModel(i, f.name, f.date, f.description, false))
+                    result.add(FilmCatalog.FilmRVModel(i, f.name, f.date, f.description, false))
                 }
                 activity?.runOnUiThread {
                     filmAdapter?.setItems(result)
@@ -242,37 +244,28 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         rvFilms.addItemDecoration(VerticalMarginDecorator(itemOffset = marginValue / HEIGHT_DIVIDER))
     }
 
-    private fun onFilmClicked(view: View, filmModel: FilmRVModel) {
+    private fun onFilmClicked(filmModel: FilmCatalog.FilmRVModel) {
         addFadeTransition()
 
-        val transitionName = view.transitionName
         val bottomSheet = favouritesAdapter?.let {
             DetailedFilmBottomSheetDialogFragment(filmModel, it)
         }
-        bottomSheet?.show(requireActivity().supportFragmentManager, DetailedFilmBottomSheetDialogFragment.DIALOG_FRAGMENT_TAG)
-//        val fragment = PlanetDetailsFragment.newInstance(
-//            filmModel.planetName,
-//            filmModel.planetDetails,
-//            filmModel.planetImage,
-//            "planet-${filmModel.planetId}"
-//        )
-//        fragment.sharedElementEnterTransition = getTransition()
-//        fragment.sharedElementReturnTransition = getTransition()
-//
-//        requireActivity().supportFragmentManager
-//            .beginTransaction()
-//            .addSharedElement(view, transitionName)
-//            .replace(R.id.main_activity_container, fragment)
-//            .addToBackStack(null)
-//            .commit()
+        bottomSheet?.show(
+            requireActivity().supportFragmentManager,
+            DetailedFilmBottomSheetDialogFragment.DIALOG_FRAGMENT_TAG
+        )
     }
 
-    private fun getTransition(): Transition? {
-        val set = TransitionSet()
-        set.ordering = TransitionSet.ORDERING_TOGETHER
-        set.addTransition(ChangeBounds())
-        set.addTransition(ChangeTransform())
-        return set
+    private fun onFavouriteFilmClicked(filmModel: FilmCatalog.FilmRVModel) {
+        addFadeTransition()
+
+        val bottomSheet = favouritesAdapter?.let {
+            DetailedFilmBottomSheetDialogFragment(filmModel, it)
+        }
+        bottomSheet?.show(
+            requireActivity().supportFragmentManager,
+            DetailedFilmBottomSheetDialogFragment.DIALOG_FRAGMENT_TAG
+        )
     }
 
     private fun addFadeTransition() {
@@ -284,23 +277,42 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         exitTransition = fade
     }
 
-
-    private fun onFavouriteClicked(position: Int, filmModel: FilmRVModel) {
-//        PlanetsDataRepository.markFavourite(planetModel)
-        filmAdapter?.updateItem(position, filmModel)
-    }
-
     private fun removeElement(position: Int) {
         val film = filmAdapter?.get(position)
         if (film != null) {
             filmAdapter?.removeAt(position)
+            val pos: Int? = favouritesAdapter?.itemPosition(film)
+            if (favouritesAdapter?.itemPosition(film) != -1) {
+                film.isFavoured = true
+                if (pos != null) {
+                    favouritesAdapter?.removeAt(pos)
+                }
+            }
             lifecycleScope.launch(Dispatchers.IO) {
                 FIlmRepository.delete(FilmModel(film.name, film.date, film.description))
             }
-            Snackbar.make(viewBinding.root, getString(R.string.cancel_deletion), Snackbar.LENGTH_SHORT)
+            Snackbar.make(
+                viewBinding.root,
+                getString(R.string.cancel_deletion),
+                Snackbar.LENGTH_SHORT
+            )
                 .setAction(getString(R.string.yes)) {
                     lifecycleScope.launch(Dispatchers.IO) {
-                        FIlmRepository.save(FilmModel(film.name, film.date, film.description))
+                        val filmModel = FilmModel(film.name, film.date, film.description)
+                        val currentUserEmail: String? =
+                            ServiceLocator.getSharedPreferences().getString(ParamsConstants.EMAIL_SP_TAG, "")
+                        FIlmRepository.save(filmModel)
+                        if (currentUserEmail != null) {
+                            UserRepository.saveUserFilmCrossRef(currentUserEmail, filmModel)
+                        }
+                    }
+                    if (film.isFavoured) {
+                        favouritesAdapter?.itemCount?.let { it1 ->
+                            favouritesAdapter?.addItem(
+                                it1,
+                                film
+                            )
+                        }
                     }
                     filmAdapter?.addItem(position, film)
                 }.show()

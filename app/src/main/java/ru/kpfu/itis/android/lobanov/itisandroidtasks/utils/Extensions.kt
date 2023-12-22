@@ -3,8 +3,8 @@ package ru.kpfu.itis.android.lobanov.itisandroidtasks.utils
 import android.util.DisplayMetrics
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.FilmEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.UserEntity
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmCatalog.FilmRVModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmModel
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmRVModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.UserModel
 
 fun Int.getValueInPx(dm: DisplayMetrics): Int {
@@ -17,7 +17,7 @@ fun UserModel.toUserEntity() = UserEntity(
     name = name,
     phone = phone,
     email = email,
-    password = PasswordEncrypter.encrypt(password, ParamsConstants.ENCRYPTING_ALGORITHM),
+    password = password,
     deletionDate = deletionDate
 )
 

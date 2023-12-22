@@ -2,22 +2,16 @@ package ru.kpfu.itis.android.lobanov.itisandroidtasks.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.R
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.UserRepository
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.UserModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.di.ServiceLocator
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.AuthorizationFragment
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.HomeFragment
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.ProfileFragment
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.fragment.UploadFilmFragment
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsConstants
 
 class MainActivity : AppCompatActivity() {
     private val fragmentContainerId: Int = R.id.main_activity_container
@@ -60,7 +54,8 @@ class MainActivity : AppCompatActivity() {
 
         bnv.setOnItemReselectedListener {}
 
-        val username: String? = ServiceLocator.getSharedPreferences().getString("username", "")
+        val username: String? =
+            ServiceLocator.getSharedPreferences().getString(ParamsConstants.USERNAME_SP_TAG, "")
         if (username.isNullOrEmpty()) {
             if (savedInstanceState == null) {
                 navigateTo(
@@ -82,10 +77,5 @@ class MainActivity : AppCompatActivity() {
             )
             .addToBackStack(null)
             .commit()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-//        repository = null
     }
 }

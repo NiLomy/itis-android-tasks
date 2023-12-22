@@ -12,21 +12,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.R
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.adapter.FilmAdapter
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.FIlmRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.RatingRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.UserRepository
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmModel
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmRVModel
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmCatalog
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmRatingModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.DialogBottomSheetFragmentDetailedFilmBinding
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.di.ServiceLocator
+import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsConstants
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.toFilmModel
 import java.math.RoundingMode
-import java.sql.Date
-import java.text.DecimalFormat
 
 class DetailedFilmBottomSheetDialogFragment(
-    private val filmModel: FilmRVModel,
+    private val filmModel: FilmCatalog.FilmRVModel,
     private val filmAdapter: FilmAdapter
 ) : BottomSheetDialogFragment(R.layout.dialog_bottom_sheet_fragment_detailed_film) {
     private val viewBinding: DialogBottomSheetFragmentDetailedFilmBinding by viewBinding(
@@ -38,7 +35,11 @@ class DetailedFilmBottomSheetDialogFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dialog_bottom_sheet_fragment_detailed_film, container, false)
+        return inflater.inflate(
+            R.layout.dialog_bottom_sheet_fragment_detailed_film,
+            container,
+            false
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,38 +53,48 @@ class DetailedFilmBottomSheetDialogFragment(
             filmNameTv.text = filmModel.name
             filmDateTv.text = filmModel.date.toString()
             filmDescriptionTv.text = filmModel.description
-            if (filmModel.isFavoured) {
-                favouriteIv.setImageResource(R.drawable.ic_favorite)
-            } else {
-                favouriteIv.setImageResource(R.drawable.ic_unfavorite)
-            }
-            val currentUserEmail: String? = ServiceLocator.getSharedPreferences().getString("userEmail", "")
+            val currentUserEmail: String? =
+                ServiceLocator.getSharedPreferences().getString(ParamsConstants.EMAIL_SP_TAG, "")
 
             if (!currentUserEmail.isNullOrEmpty()) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val isFilmFavourite = UserRepository.isFilmFavourite(currentUserEmail, filmModel.name, filmModel.date)
+                    val isFilmFavourite = UserRepository.isFilmFavourite(
+                        currentUserEmail,
+                        filmModel.name,
+                        filmModel.date
+                    )
                     if (isFilmFavourite) {
-                        markFavouriteBtn.text = "Unfavourite"
+                        markFavouriteBtn.text = getString(R.string.unfavorite)
                     } else {
-                        markFavouriteBtn.text = "Favourite"
+                        markFavouriteBtn.text = getString(R.string.favorite)
                     }
                 }
 
                 markFavouriteBtn.setOnClickListener {
                     lifecycleScope.launch(Dispatchers.IO) {
-                        val isFilmFavourite = UserRepository.isFilmFavourite(currentUserEmail, filmModel.name, filmModel.date)
+                        val isFilmFavourite = UserRepository.isFilmFavourite(
+                            currentUserEmail,
+                            filmModel.name,
+                            filmModel.date
+                        )
                         if (isFilmFavourite) {
-                            UserRepository.deleteUserFilmCrossRef(currentUserEmail, filmModel.toFilmModel())
+                            UserRepository.deleteUserFilmCrossRef(
+                                currentUserEmail,
+                                filmModel.toFilmModel()
+                            )
                             activity?.runOnUiThread {
-                                filmAdapter.removeAt(filmModel.id - 1)
-                                markFavouriteBtn.text = "Favourite"
+                                filmAdapter.remove(filmModel)
+                                markFavouriteBtn.text = getString(R.string.favorite)
                             }
                         } else {
-                            UserRepository.saveUserFilmCrossRef(currentUserEmail, filmModel.toFilmModel())
+                            UserRepository.saveUserFilmCrossRef(
+                                currentUserEmail,
+                                filmModel.toFilmModel()
+                            )
                             activity?.runOnUiThread {
                                 filmModel.isFavoured = true
-                                filmAdapter.addItem(filmModel)
-                                markFavouriteBtn.text = "Unfavourite"
+                                filmAdapter.addItem(filmAdapter.itemCount, filmModel)
+                                markFavouriteBtn.text = getString(R.string.unfavorite)
                             }
                         }
                     }
@@ -92,18 +103,20 @@ class DetailedFilmBottomSheetDialogFragment(
 
             lifecycleScope.launch(Dispatchers.IO) {
                 val rating: Double? = RatingRepository.getAllFilmRating(filmModel.toFilmModel())
-                if (rating != null) {
+                if (rating != null && !rating.isNaN()) {
                     activity?.runOnUiThread {
-                        if (rating.isNaN()) {
-                            ratingTv.text = "There are no ratings"
-                        } else {
-                            val s = rating.toBigDecimal().setScale(1, RoundingMode.UP).toDouble().toString()
-                            ratingTv.text = "Rating: " + rating.toBigDecimal().setScale(1, RoundingMode.UP).toDouble().toString()
-                        }
+                        ratingTv.text = getString(
+                            R.string.rating_display,
+                            rating.toBigDecimal().setScale(1, RoundingMode.UP)
+                                .toDouble().toString()
+                        )
                     }
+                } else {
+                    ratingTv.text = getString(R.string.no_ratings)
                 }
                 if (currentUserEmail != null) {
-                    val markedRating = RatingRepository.getFilmRating(filmModel.toFilmModel(), currentUserEmail)
+                    val markedRating =
+                        RatingRepository.getFilmRating(filmModel.toFilmModel(), currentUserEmail)
                     if (markedRating != null && !markedRating.isNaN()) {
                         activity?.runOnUiThread {
                             filmRb.rating = markedRating.toFloat()
@@ -115,11 +128,22 @@ class DetailedFilmBottomSheetDialogFragment(
             filmRb.setOnRatingBarChangeListener { _, rating, _ ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     if (!currentUserEmail.isNullOrEmpty()) {
-                        RatingRepository.save(FilmRatingModel(filmModel.name, filmModel.date, currentUserEmail, rating.toDouble()))
-                        val resultRating: Double? = RatingRepository.getAllFilmRating(filmModel.toFilmModel())
+                        RatingRepository.save(
+                            FilmRatingModel(
+                                filmModel.name,
+                                filmModel.date,
+                                currentUserEmail,
+                                rating.toDouble()
+                            )
+                        )
+                        val resultRating: Double? =
+                            RatingRepository.getAllFilmRating(filmModel.toFilmModel())
                         if (resultRating != null) {
                             activity?.runOnUiThread {
-                                ratingTv.text = "Rating: " + resultRating.toBigDecimal().setScale(1, RoundingMode.UP).toDouble().toString()
+                                ratingTv.text = getString(
+                                    R.string.rating_display, resultRating.toBigDecimal()
+                                        .setScale(1, RoundingMode.UP).toDouble().toString()
+                                )
                             }
                         }
                     }
@@ -130,7 +154,7 @@ class DetailedFilmBottomSheetDialogFragment(
 
     private fun calculateViewDialogHeight() {
         val displayMetrics = requireContext().resources.displayMetrics
-        val dialogHeight = displayMetrics.heightPixels / 3
+        val dialogHeight = displayMetrics.heightPixels
 
         val layoutParams =
             FrameLayout.LayoutParams(

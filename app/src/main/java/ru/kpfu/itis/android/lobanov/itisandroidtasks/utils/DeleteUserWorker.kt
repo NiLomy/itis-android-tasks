@@ -10,7 +10,7 @@ class DeleteUserWorker(
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
-        inputData.getString("userEmail")?.let { UserRepository.delete(it) }
+        inputData.getString(ParamsConstants.EMAIL_SP_TAG)?.let { UserRepository.delete(it) }
         return Result.success()
     }
 }

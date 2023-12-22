@@ -11,9 +11,15 @@ interface RatingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(ratingEntity: FilmRatingEntity)
 
-    @Query("SELECT * FROM film_rating WHERE filmId = :filmId AND userId = :userId")
+    @Query(SELECT_SINGLE_BY_FILM_AND_USER_QUERY)
     suspend fun getFilmRating(filmId: Int, userId: Int): FilmRatingEntity?
 
-    @Query("SELECT * FROM film_rating WHERE filmId = :filmId")
+    @Query(SELECT_ALL_BY_FILM_QUERY)
     suspend fun getAllFilmRating(filmId: Int): List<FilmRatingEntity>
+
+    companion object {
+        const val SELECT_SINGLE_BY_FILM_AND_USER_QUERY =
+            "SELECT * FROM film_rating WHERE filmId = :filmId AND userId = :userId"
+        const val SELECT_ALL_BY_FILM_QUERY = "SELECT * FROM film_rating WHERE filmId = :filmId"
+    }
 }

@@ -10,14 +10,14 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.R
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.FilmEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.repository.FIlmRepository
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.model.FilmModel
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.databinding.FragmentUploadFilmBinding
-import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.MainActivity
 import java.sql.Date
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
-class UploadFilmFragment: Fragment(R.layout.fragment_upload_film) {
+class UploadFilmFragment : Fragment(R.layout.fragment_upload_film) {
     private var _viewBinding: FragmentUploadFilmBinding? = null
     private val viewBinding: FragmentUploadFilmBinding
         get() = _viewBinding!!
@@ -40,7 +40,7 @@ class UploadFilmFragment: Fragment(R.layout.fragment_upload_film) {
         with(viewBinding) {
             uploadBtn.setOnClickListener {
                 val name: String = nameEt.text.toString()
-                val date= "${datePicker.year}-${datePicker.month}-${datePicker.dayOfMonth}"
+                val date = "${datePicker.year}-${datePicker.month}-${datePicker.dayOfMonth}"
                 val description: String = descriptionEt.text.toString()
 
                 if (isValid(name, date)) {
@@ -54,14 +54,16 @@ class UploadFilmFragment: Fragment(R.layout.fragment_upload_film) {
         lifecycleScope.launch(Dispatchers.IO) {
             val film: FilmModel? = FIlmRepository.getFilm(filmName, Date.valueOf(date))
             if (film != null) {
-                makeToast("This film currently exists")
+                makeToast(getString(R.string.this_film_currently_exists))
             } else {
                 FIlmRepository.save(FilmModel(filmName, Date.valueOf(date), description))
-                with(viewBinding) {
-                    nameEt.setText("")
-                    descriptionEt.setText("")
+                activity?.runOnUiThread {
+                    with(viewBinding) {
+                        nameEt.setText("")
+                        descriptionEt.setText("")
+                    }
                 }
-                makeToast("You successfully added this film!")
+                makeToast(getString(R.string.you_successfully_added_this_film))
             }
         }
     }

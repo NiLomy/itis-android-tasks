@@ -20,7 +20,7 @@ object UserRepository {
 
     suspend fun saveUserFilmCrossRef(email: String, film: FilmModel) {
         val filmEntity = ServiceLocator.getDbInstance().getFilmDao().get(film.name, film.date)
-        getUserByEmail(email)?.let {  userEntity ->
+        getUserByEmail(email)?.let { userEntity ->
             filmEntity?.let { filmEntity ->
                 ServiceLocator.getDbInstance().getUserDao().saveUserFilmCrossRef(
                     UserFilmCrossRefEntity(userEntity.id, filmEntity.filmId)
@@ -35,7 +35,7 @@ object UserRepository {
 
     suspend fun deleteUserFilmCrossRef(email: String, film: FilmModel) {
         val filmEntity = ServiceLocator.getDbInstance().getFilmDao().get(film.name, film.date)
-        getUserByEmail(email)?.let {  userEntity ->
+        getUserByEmail(email)?.let { userEntity ->
             filmEntity?.let { filmEntity ->
                 ServiceLocator.getDbInstance().getUserDao().deleteUserFilmCrossRef(
                     UserFilmCrossRefEntity(userEntity.id, filmEntity.filmId)
@@ -59,17 +59,20 @@ object UserRepository {
     }
 
     suspend fun getUser(email: String, password: String): UserModel? {
-        val userEntity: UserEntity? = ServiceLocator.getDbInstance().getUserDao().get(email, PasswordEncrypter.encrypt(password, ParamsConstants.ENCRYPTING_ALGORITHM))
+        val userEntity: UserEntity? = ServiceLocator.getDbInstance().getUserDao()
+            .get(email, password)
         return userEntity?.toUserModel()
     }
 
     suspend fun getAllFavourites(email: String): List<FilmModel> {
-        val userFavouriteFilms: UserFavouriteFilmsEntity = ServiceLocator.getDbInstance().getUserDao().getAllFavourites(email)
+        val userFavouriteFilms: UserFavouriteFilmsEntity =
+            ServiceLocator.getDbInstance().getUserDao().getAllFavourites(email)
         return userFavouriteFilms.films.map { filmEntity -> filmEntity.toFilmModel() }
     }
 
     suspend fun isFilmFavourite(email: String, filmName: String, filmDate: Date): Boolean {
-        val userFavouriteFilms: UserFavouriteFilmsEntity = ServiceLocator.getDbInstance().getUserDao().getAllFavourites(email)
+        val userFavouriteFilms: UserFavouriteFilmsEntity =
+            ServiceLocator.getDbInstance().getUserDao().getAllFavourites(email)
         return userFavouriteFilms.films.any { filmEntity ->
             filmEntity.name == filmName && filmEntity.date == filmDate
         }
@@ -87,6 +90,11 @@ object UserRepository {
 
     suspend fun updatePassword(user: UserModel, password: String) {
         val id = getUser(user.email, user.password)?.id
-        id?.let { ServiceLocator.getDbInstance().getUserDao().updatePassword(it, PasswordEncrypter.encrypt(password, ParamsConstants.ENCRYPTING_ALGORITHM)) }
+        id?.let {
+            ServiceLocator.getDbInstance().getUserDao().updatePassword(
+                it,
+                password
+            )
+        }
     }
 }

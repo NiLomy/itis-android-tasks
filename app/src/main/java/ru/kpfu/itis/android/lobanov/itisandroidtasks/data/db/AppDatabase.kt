@@ -12,7 +12,10 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.FilmRatingEn
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.UserEntity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.data.db.entity.relation.UserFilmCrossRefEntity
 
-@Database(entities = [UserEntity::class, FilmEntity::class, UserFilmCrossRefEntity::class, FilmRatingEntity::class], version = 8)
+@Database(
+    entities = [UserEntity::class, FilmEntity::class, UserFilmCrossRefEntity::class, FilmRatingEntity::class],
+    version = 8
+)
 @TypeConverters(DateTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 

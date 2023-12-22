@@ -4,55 +4,73 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/name_et"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/name_et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
         android:layout_marginTop="130dp"
-        android:hint="Film name"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:hintEnabled="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
 
+        <EditText
+            android:id="@+id/name_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/film_name"
+            android:imeOptions="actionNext"
+            android:inputType="text" />
 
+    </com.google.android.material.textfield.TextInputLayout>
 
     <DatePicker
         android:id="@+id/datePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:datePickerMode="spinner"
+        android:layout_marginTop="20dp"
         android:calendarViewShown="false"
-        app:layout_constraintTop_toBottomOf="@+id/name_et"
+        android:datePickerMode="spinner"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/name_et_title" />
 
-    <!--    <androidx.appcompat.widget.AppCompatEditText-->
-<!--        android:id="@+id/year_et"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="30dp"-->
-<!--        android:inputType="date"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/name_et" />-->
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/description_et"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/description_et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
         android:layout_marginTop="30dp"
-        android:hint="Description"
+        app:hintEnabled="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/datePicker" />
+        app:layout_constraintTop_toBottomOf="@id/datePicker"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <androidx.appcompat.widget.AppCompatButton
+        <EditText
+            android:id="@+id/description_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/film_description"
+            android:imeOptions="actionNext"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/upload_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Add film"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/description_et" />
+        android:layout_marginHorizontal="72dp"
+        android:layout_marginVertical="32dp"
+        android:text="@string/add_film"
+        android:textColor="@color/black"
+        app:backgroundTint="@android:color/white"
+        app:cornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description_et_title"
+        app:rippleColor="@color/purple_200"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

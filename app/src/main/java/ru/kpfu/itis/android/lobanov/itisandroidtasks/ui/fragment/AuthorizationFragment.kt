@@ -20,7 +20,7 @@ import ru.kpfu.itis.android.lobanov.itisandroidtasks.ui.MainActivity
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.ParamsConstants
 import ru.kpfu.itis.android.lobanov.itisandroidtasks.utils.PasswordEncrypter
 
-class AuthorizationFragment: Fragment(R.layout.fragment_authorization) {
+class AuthorizationFragment : Fragment(R.layout.fragment_authorization) {
     private var _viewBinding: FragmentAuthorizationBinding? = null
     private val viewBinding: FragmentAuthorizationBinding
         get() = _viewBinding!!
@@ -38,7 +38,8 @@ class AuthorizationFragment: Fragment(R.layout.fragment_authorization) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        activity?.findViewById<BottomNavigationView>(R.id.main_bottom_navigation)?.visibility = View.GONE
+        activity?.findViewById<BottomNavigationView>(R.id.main_bottom_navigation)?.visibility =
+            View.GONE
         db = ServiceLocator.getDbInstance()
     }
 
@@ -49,16 +50,22 @@ class AuthorizationFragment: Fragment(R.layout.fragment_authorization) {
                 val password: String = passwordEt.text.toString()
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    makeToast("This fields should not be empty")
+                    makeToast(getString(R.string.this_fields_should_not_be_empty))
                 } else {
                     lifecycleScope.launch(Dispatchers.IO) {
-                        val user: UserModel? = UserRepository.getUser(email, password)
+                        val user: UserModel? = UserRepository.getUser(email, PasswordEncrypter.encrypt(
+                            password,
+                            ParamsConstants.ENCRYPTING_ALGORITHM
+                        ))
                         if (user == null) {
-                            makeToast("There is no such user. Please register in")
+                            makeToast(getString(R.string.there_is_no_such_user_please_register_in))
                         } else {
                             if (user.deletionDate != null) {
                                 val dialog = RestoreDialogFragment(user = user, signIn = ::signIn)
-                                dialog.show(parentFragmentManager, RestoreDialogFragment.RESTORE_DIALOG_FRAGMENT_TAG)
+                                dialog.show(
+                                    parentFragmentManager,
+                                    RestoreDialogFragment.RESTORE_DIALOG_FRAGMENT_TAG
+                                )
                             } else {
                                 signIn(user)
                             }
@@ -78,10 +85,10 @@ class AuthorizationFragment: Fragment(R.layout.fragment_authorization) {
 
     private fun signIn(user: UserModel) {
         ServiceLocator.getSharedPreferences().edit()
-            .putString("username", user.name)
-            .putString("userPhone", user.phone)
-            .putString("userEmail", user.email)
-            .putString("userPassword", PasswordEncrypter.encrypt(user.password, ParamsConstants.ENCRYPTING_ALGORITHM))
+            .putString(ParamsConstants.USERNAME_SP_TAG, user.name)
+            .putString(ParamsConstants.PHONE_SP_TAG, user.phone)
+            .putString(ParamsConstants.EMAIL_SP_TAG, user.email)
+            .putString(ParamsConstants.PASSWORD_SP_TAG, user.password)
             .apply()
         (activity as MainActivity).navigateTo(
             HomeFragment(),
